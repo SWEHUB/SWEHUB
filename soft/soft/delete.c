@@ -1,0 +1,3 @@
+void aa(){
+	printf("qkqh");
+}
