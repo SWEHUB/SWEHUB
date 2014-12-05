@@ -3,6 +3,14 @@
 #include <string.h>
 #define MAXSTRING 256
 
+struct BookInfo{
+	char title[100];
+	char authors[20];
+	char publisher[20];
+	char isbn[20];
+	char availability[10];
+	char renting[10];// long
+};
 
 void join();
 void Delete();
@@ -227,13 +235,9 @@ char *login(void){
 void bookadd(){
 	int select;
 	int num;
-	char title[100];
-	char authors[20];
-	char publisher[20];
-	char isbn[20];
-	char availability[10];
-	char renting[10];// long
 	FILE *f;
+
+	struct BookInfo Book; 
 
 	if((f=fopen("book_info.txt","a+"))==NULL)
 	{
@@ -247,16 +251,16 @@ void bookadd(){
 	for(num=0; num<1; num++)
 		{
 		printf("책 제목 : ");
-		gets(title);
+		gets(Book.title);
 
 		printf("저자 : ");
-		gets(authors);
+		gets(Book.authors);
 
 		printf("출판사 : ");
-		gets(publisher);
+		gets(Book.publisher);
 
 		printf("ISBN : ");
-		gets(isbn);
+		gets(Book.isbn);
 
 		//대출여부 대출가능
 		//대출학생 -
@@ -278,7 +282,7 @@ void bookadd(){
 		{
 			for(num=0;num<1;num++)
 			{
-			fprintf(f,"%s	%s	%s	%s	대출가능	-",title,authors,publisher,isbn,availability,renting);
+			fprintf(f,"%s	%s	%s	%s	대출가능	-",Book.title,Book.authors,Book.publisher,Book.isbn,Book.availability,Book.renting);
 			// 기본으로 대출가능, -
 			fprintf(f,"\n");
 			}
