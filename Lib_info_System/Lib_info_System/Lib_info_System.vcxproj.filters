@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libinfo_sys.c">
+    <ClCompile Include="libinfo_system.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

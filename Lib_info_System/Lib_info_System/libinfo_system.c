@@ -3,8 +3,17 @@
 #include <string.h>
 #define MAXSTRING 256
 
+struct BookInfo{
+	char title[100];
+	char authors[20];
+	char publisher[20];
+	char isbn[20];
+	char availability[10];
+	char renting[10];// long
+	};
 
 void join();
+void Update();
 void Delete();
 char *login(void);
 void bookadd();
@@ -15,6 +24,7 @@ void main_menu();
 void main(){
 	main_menu();
 }
+
 void join(){
 	int select;
 	int num;
@@ -107,14 +117,53 @@ void join(){
 
 	fclose(f);
 }
+void Update(){
+	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
+    int line= 0;//읽어들인 줄 갯수 카운트 
+    int i, n,m,a;//조작을 위한 임시 변수들 
+    FILE *fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
+    while(1) 
+	{ 
+		if(fgets(str[line], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);//파일 닫기 
+    //읽어들인 문자열 출력 
+  /* for(i=0;i < line;i++) 
+   { 
+      printf("%d : %s", i+1, str[i]); 
+   } */
+	/*printf("삭제할 라인:"); 
+    scanf("%d", &n); 
+	getchar();
+	printf("수정하고자 하는 정보");
+	scanf("%d", &m);
+	getchar();
+	a=n-1;
+	if(m==1){
+		printf("책 제목: =>");
+		scanf("%s",str[a][0]);
+		getchar();
+	}*/
+    fp = fopen("book_info.txt", "w");//파일을 저장 모드로 열기 
+	for(i=0;i < line;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", str[i]);
+	} 
+	fclose(fp); 
+	//fp = fopen("book_info.txt", "a");
+	//fclose(fp);
+
+}
 void Delete(){
-	 char str[1000][256] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
+	 char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
    int line= 0;//읽어들인 줄 갯수 카운트 
    int i, n;//조작을 위한 임시 변수들 
    FILE *fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
    while(1) 
    { 
-      if(fgets(str[line], 256, fp) == NULL)//파일에서 한줄 읽어오기 
+      if(fgets(str[line], 180, fp) == NULL)//파일에서 한줄 읽어오기 
       break;//읽어들인게 없으면 루프 종료   
       line++;//읽어들인 줄 갯수 카운트 
    } 
@@ -227,13 +276,8 @@ char *login(void){
 void bookadd(){
 	int select;
 	int num;
-	char title[100];
-	char authors[20];
-	char publisher[20];
-	char isbn[20];
-	char availability[10];
-	char renting[10];// long
 	FILE *f;
+	struct BookInfo Book;
 
 	if((f=fopen("book_info.txt","a+"))==NULL)
 	{
@@ -247,16 +291,16 @@ void bookadd(){
 	for(num=0; num<1; num++)
 		{
 		printf("책 제목 : ");
-		gets(title);
+		gets(Book.title);
 
 		printf("저자 : ");
-		gets(authors);
+		gets(Book.authors);
 
 		printf("출판사 : ");
-		gets(publisher);
+		gets(Book.publisher);
 
 		printf("ISBN : ");
-		gets(isbn);
+		gets(Book.isbn);
 
 		//대출여부 대출가능
 		//대출학생 -
@@ -273,12 +317,14 @@ void bookadd(){
 		printf("0. 메인화면\n");
 
 		scanf("%d",&select);
+		system("cls");
+		getchar();
 
 		if(select == 1)
 		{
 			for(num=0;num<1;num++)
 			{
-			fprintf(f,"%s	%s	%s	%s	대출가능	-",title,authors,publisher,isbn,availability,renting);
+			fprintf(f,"%s	%s	%s	%s	대출가능	-",Book.title,Book.authors,Book.publisher,Book.isbn,Book.availability,Book.renting);
 			// 기본으로 대출가능, -
 			fprintf(f,"\n");
 			}
@@ -286,7 +332,6 @@ void bookadd(){
 		}
 		else if(select == 0)
 		{
-			printf("\n---- 메인 ----\n");
 			break;
 		}
 		else
@@ -308,8 +353,7 @@ void lib_menu(){
 					system("CLS");
 					getchar();
 					if(lib_menu==1){
-						printf("fsdf");
-						Delete();
+						Update();
 						continue;
 					}
 					else if(lib_menu==2){
