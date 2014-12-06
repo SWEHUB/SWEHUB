@@ -15,6 +15,8 @@ struct BookInfo{
 void join();
 void Update();
 void Delete();
+void rent(char *aa,char *bb);
+void Return();
 char *login(void);
 void bookadd();
 void lib_menu();
@@ -122,11 +124,38 @@ void join(){
 
 	fclose(f);
 }
-void Update(){
+void Update(char *bb){
+	int select;
+	int i;
+	int str_ck;
+	int book_num=0,book_num2=0;
+	char cmp_ISBN[10];
+	char ISBN[10];
+	char string[MAXSTRING]; 
+	char string2[MAXSTRING]; 
+	char buffer[100];
+	FILE *f,*fp;
+	char *pch;
+	char *booklist2;
+	char *s_book;
+	char booklist[100]="";
+	char bookin[150]="";
+	char title[100];//
+	char authors[20];
+	char publisher[20];
+	char isbn[20];
+	char title2[100];//
+	char authors2[20];
+	char publisher2[20];
+	char isbn2[20];
+	char availability[10];
+	char renting[10];// long
 	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
-    int line= 0;//읽어들인 줄 갯수 카운트 
-    int i, n,m,a;//조작을 위한 임시 변수들 
-    FILE *fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
+	char std[1000][180] = {0,};
+    int line= 0, line2= 0;//읽어들인 줄 갯수 카운트 
+	int menu;
+
+	fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
     while(1) 
 	{ 
 		if(fgets(str[line], 180, fp) == NULL)//파일에서 한줄 읽어오기 
@@ -134,34 +163,137 @@ void Update(){
 		line++;//읽어들인 줄 갯수 카운트 
    } 
 	fclose(fp);//파일 닫기 
-    //읽어들인 문자열 출력 
-  /* for(i=0;i < line;i++) 
-   { 
-      printf("%d : %s", i+1, str[i]); 
-   } */
-	/*printf("삭제할 라인:"); 
-    scanf("%d", &n); 
-	getchar();
-	printf("수정하고자 하는 정보");
-	scanf("%d", &m);
-	getchar();
-	a=n-1;
-	if(m==1){
-		printf("책 제목: =>");
-		scanf("%s",str[a][0]);
+	
+	if((f=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	if((fp=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	while(fgets(string,MAXSTRING - 1,f)) 
+	{ 
+		str_ck=1;
+		pch = strtok(string,"	,\n");// string에 ISBN이 들어감
+
+		fgets(string2,MAXSTRING - 1,fp);
+		while (pch != NULL)
+		{
+			if(str_ck==1){
+				strcpy(title,pch);
+			}
+			else if(str_ck==2){
+				strcpy(authors,pch);
+			}
+			else if(str_ck==3){
+				strcpy(publisher,pch);
+			}
+			else if(str_ck==4)
+			{
+				strcpy(cmp_ISBN,pch);
+				strcpy(ISBN,bb);
+				if(!strcmp(cmp_ISBN,ISBN))
+				{
+					strcpy(isbn,pch);
+					str_ck++;
+					pch = strtok(NULL,"	,\n");
+					strcpy(availability,pch);
+					str_ck++;
+					pch = strtok(NULL,"	,\n");
+					strcpy(renting,pch);
+					break;
+				}
+				book_num++;
+			}
+
+			str_ck++;			  
+			pch = strtok(NULL,"	,\n");
+		}
+		if(book_num==book_num2)
+			break;
+		book_num2++;
+	}
+	fclose(fp);
+	fp = fopen("book_info.txt", "r");
+	 while(1) 
+	{ 
+		if(fgets(std[line2], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line2++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);
+	while(1){
+		printf("--------------------\n");
+		printf("수정할 세부사항=>");
+		scanf("%d",&select);
 		getchar();
-	}*/
-    fp = fopen("book_info.txt", "w");//파일을 저장 모드로 열기 
-	for(i=0;i < line;i++){ 
+		
+		if(select==1){
+			printf("책제목: %s =>",title);
+			scanf("%s",&title);
+			getchar();
+		}
+		else if(select==2){
+			printf("저자: %s =>",authors);
+			scanf("%s",&authors);
+			getchar();
+		}
+		else if(select==3){
+			printf("출판사: %s =>",publisher);
+			scanf("%s",&publisher);
+			getchar();
+		}
+		else if(select==4){
+			printf("ISBN: %s =>",isbn);
+			scanf("%s",&isbn);
+			getchar();
+		}
+		else
+			continue;
+		while(1){
+			printf("--------------------\n");
+			printf("1.변경사항 저장\n");
+			printf("2.수정할 세부사항 재선택\n");
+			printf("0.메인화면\n");
+			printf("=>");
+			scanf("%d",&menu);
+			if(menu==1){
+				 fp = fopen("book_info.txt", "w");//파일을 저장 모드로 열기 
+	for(i=0;i < book_num;i++){ 
 		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
 			fprintf(fp, "%s", str[i]);
 	} 
 	fclose(fp); 
-	//fp = fopen("book_info.txt", "a");
-	//fclose(fp);
+	fp = fopen("book_info.txt", "a");
+	fprintf(fp,"%s	%s	%s	%s	%s	%s",title,authors,publisher,isbn,availability,renting);
+	fprintf(fp,"\n");
+	fclose(fp);
+	fp = fopen("book_info.txt", "a");
+	for(i=book_num+1;i < line;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", std[i]);
+	} 
+	fprintf(fp,"\n");
+	fclose(fp);
+	break;
+			}
+			else if(menu==2){
+				break;
+			}
+			else if(menu==0){
+				lib_menu();
+			}
+			else
+				continue;
+		}
+		
+	}
 
 }
-void Delete(){
+void Delete(){//기능구현완료
 	 char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
    int line= 0;//읽어들인 줄 갯수 카운트 
    int i, n;//조작을 위한 임시 변수들 
@@ -187,6 +319,272 @@ void Delete(){
       fprintf(fp, "%s", str[i]);  
    } 
    fclose(fp); 
+}
+void rent(char *bb){// 학번,ISBN 받아오기
+	int select;
+	int i;
+	int str_ck;
+	int book_num=0,book_num2=0;
+	char cmp_ISBN[10];
+	char ISBN[10];
+	char string[MAXSTRING]; 
+	char string2[MAXSTRING]; 
+	char buffer[100];
+	FILE *f,*fp;
+	char *pch;
+	char *booklist2;
+	char *s_book;
+	char booklist[100]="";
+	char bookin[150]="";
+	char title[100];//
+	char authors[20];
+	char publisher[20];
+	char isbn[20];
+	char renting[10];// long
+	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
+	char std[1000][180] = {0,};
+    int line= 0, line2= 0;//읽어들인 줄 갯수 카운트 
+	int menu;
+	//char booklist2[100]="";
+	while(1){
+		printf("==========도서대출==========\n");
+		printf("대출학생 ID:");
+		scanf("%s",&renting);
+		getchar();
+		printf("------------------------------\n");
+		printf("1. %s에게 도서대출\n",renting);
+		printf("2.대출 취소\n");
+		printf("=>");
+		scanf("%d",&select);
+		getchar();
+		if(select==1){
+			fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
+    while(1) 
+	{ 
+		if(fgets(str[line], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);//파일 닫기 
+	
+	if((f=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	if((fp=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	while(fgets(string,MAXSTRING - 1,f)) 
+	{ 
+		str_ck=1;
+		pch = strtok(string,"	,\n");// string에 ISBN이 들어감
+
+		fgets(string2,MAXSTRING - 1,fp);
+		while (pch != NULL)
+		{
+			if(str_ck==1){
+				strcpy(title,pch);
+				//strcat(title,string);
+
+			}
+			else if(str_ck==2){
+				strcpy(authors,pch);
+				//strcat(authors,string);
+			}
+			else if(str_ck==3){
+				strcpy(publisher,pch);
+				//strcat(publisher,string);
+			}
+			else if(str_ck==4)
+			{
+				strcpy(cmp_ISBN,pch);
+				strcpy(ISBN,bb);
+				if(!strcmp(cmp_ISBN,ISBN))
+				{
+					strcpy(isbn,pch);
+					//strcat(isbn,string);
+					break;
+				}
+				book_num++;
+			}
+
+			str_ck++;			  
+			pch = strtok(NULL,"	,\n");
+		}
+		if(book_num==book_num2)
+			break;
+		book_num2++;
+	}
+	fclose(fp);
+	fp = fopen("book_info.txt", "r");
+	 while(1) 
+	{ 
+		if(fgets(std[line2], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line2++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);
+    fp = fopen("book_info.txt", "w");//파일을 저장 모드로 열기 
+	for(i=0;i < book_num;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", str[i]);
+	} 
+	fclose(fp); 
+	fp = fopen("book_info.txt", "a");
+	fprintf(fp,"%s	%s	%s	%s	대출불가	%s",title,authors,publisher,isbn,renting);
+	fprintf(fp,"\n");
+	fclose(fp);
+	fp = fopen("book_info.txt", "a");
+	for(i=book_num+1;i < line;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", std[i]);
+	} 
+	fprintf(fp,"\n");
+	fclose(fp);
+			break;
+		}
+		else if(select==2){
+			break;
+		}
+		else
+			continue;
+	}
+	system("cls");
+}
+void Return(char *bb){
+	int select;
+	int i;
+	int str_ck;
+	int book_num=0,book_num2=0;
+	char cmp_ISBN[10];
+	char ISBN[10];
+	char string[MAXSTRING]; 
+	char string2[MAXSTRING]; 
+	char buffer[100];
+	FILE *f,*fp;
+	char *pch;
+	char *booklist2;
+	char *s_book;
+	char booklist[100]="";
+	char bookin[150]="";
+	char title[100];//
+	char authors[20];
+	char publisher[20];
+	char isbn[20];
+	char availability[10];
+	char renting[10];// long
+	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
+	char std[1000][180] = {0,};
+    int line= 0, line2= 0;//읽어들인 줄 갯수 카운트 
+	while(1){
+		printf("==========도서반납==========\n");
+		printf("반납하시겠습니까?\n");
+		printf("1.반납\n");
+		printf("2.취소\n");
+		printf("=>");
+		scanf("%d", &select);
+		if(select==1){
+			fp = fopen("book_info.txt", "r");//파일을 읽기 모드로 열기(파일명은 data.txt) 
+    while(1) 
+	{ 
+		if(fgets(str[line], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);//파일 닫기 
+	
+	if((f=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	if((fp=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	while(fgets(string,MAXSTRING - 1,f)) 
+	{ 
+		str_ck=1;
+		pch = strtok(string,"	,\n");// string에 ISBN이 들어감
+
+		fgets(string2,MAXSTRING - 1,fp);
+		while (pch != NULL)
+		{
+			if(str_ck==1){
+				strcpy(title,pch);
+				//strcat(title,string);
+
+			}
+			else if(str_ck==2){
+				strcpy(authors,pch);
+				//strcat(authors,string);
+			}
+			else if(str_ck==3){
+				strcpy(publisher,pch);
+				//strcat(publisher,string);
+			}
+			else if(str_ck==4)
+			{
+				strcpy(cmp_ISBN,pch);
+				strcpy(ISBN,bb);
+				if(!strcmp(cmp_ISBN,ISBN))
+				{
+					strcpy(isbn,pch);
+					//strcat(isbn,string);
+					break;
+				}
+				book_num++;
+			}
+
+			str_ck++;			  
+			pch = strtok(NULL,"	,\n");
+		}
+		if(book_num==book_num2)
+			break;
+		book_num2++;
+	}
+	fclose(fp);
+	fp = fopen("book_info.txt", "r");
+	 while(1) 
+	{ 
+		if(fgets(std[line2], 180, fp) == NULL)//파일에서 한줄 읽어오기 
+			break;//읽어들인게 없으면 루프 종료   
+		line2++;//읽어들인 줄 갯수 카운트 
+   } 
+	fclose(fp);
+    fp = fopen("book_info.txt", "w");//파일을 저장 모드로 열기 
+	for(i=0;i < book_num;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", str[i]);
+	} 
+	fclose(fp); 
+	fp = fopen("book_info.txt", "a");
+	fprintf(fp,"%s	%s	%s	%s	대출가능	-",title,authors,publisher,isbn);
+	fprintf(fp,"\n");
+	fclose(fp);
+	fp = fopen("book_info.txt", "a");
+	for(i=book_num+1;i < line;i++){ 
+		//if(n != (i+1))//삭제할 라인이 아니면 파일에 저장 
+			fprintf(fp, "%s", std[i]);
+	} 
+	fprintf(fp,"\n");
+	fclose(fp);
+			break;
+
+		}
+		else if(select==2){
+			//bookinfo.c
+			break;
+		}
+		else
+			continue;
+
+	}
+	system("cls");
 }
 char *login(void){
 	//int select;
@@ -436,6 +834,7 @@ void rentlist(char *aa){
 }
 
 
+
 void lib_menu(){
 	int lib_menu;
 	while(1){
@@ -449,7 +848,7 @@ void lib_menu(){
 					system("CLS");
 					getchar();
 					if(lib_menu==1){
-						Update();
+						Update("45423323");
 						continue;
 					}
 					else if(lib_menu==2){
