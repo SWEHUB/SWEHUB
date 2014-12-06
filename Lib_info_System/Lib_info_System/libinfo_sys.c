@@ -26,6 +26,7 @@ void join(){
 	check=0;
 	for(num=0; num<1; num++)
 		{
+		fflush(stdin);
 		printf("ID : ");
 		gets(id);
 		// 중복검사
@@ -52,7 +53,8 @@ void join(){
 	}
 	while(fgets(string,MAXSTRING - 1,fp)) 
 	{ 
-		if(strstr(string, id))
+		if(!strncmp(string, id,7))
+		//if(strstr(string, id))
 		{
 			check=1;
 			system("cls");
@@ -100,9 +102,13 @@ char *login(void){
 	int num;
 	static char id[10];
 	char pw[20];
+	char cmp_id[10];
+	char cmp_pw[20];
 	//char name[10];
 	//char dept[20];
 	int check=0;
+	char *pch;
+	int str_ck=1;
 
 	char lib_id[10]="7654321";
 	char lib_pw[20]="Q1234";
@@ -123,9 +129,11 @@ char *login(void){
 	for(num=0; num<1; num++)
 		{
 		printf("ID : ");
+		fflush(stdin);
 		scanf("%s",&id);
 
 		printf("pw : ");
+		fflush(stdin);
 		scanf("%s",&pw);
 
 		}
@@ -136,7 +144,21 @@ char *login(void){
 
 	while(fgets(string,MAXSTRING - 1,f)) 
 	{ 
-		if(strstr( string, id) && strstr( string, pw))
+		str_ck=1;
+		pch = strtok(string,"	");
+		while (pch != NULL)
+		{
+			if(str_ck==1)
+			strcpy(cmp_id,pch);
+			else if(str_ck==2)
+			strcpy(cmp_pw,pch);
+
+			str_ck++;
+			pch = strtok(NULL,"	");
+			//id=pch;
+		}
+		
+		if(!strcmp(cmp_id, id) && !strcmp(cmp_pw, pw))
 		{
 	
 			if(!strcmp(id,lib_id) && !strcmp(pw,lib_pw))
@@ -158,7 +180,11 @@ char *login(void){
 	}
 
 	if(check==0)
-		printf("\n======== 회원 가입 =========\n");
+	{
+		//printf("\n======== 회원 가입 =========\n");
+	join();
+	return("");
+	}
 
 	fclose(f);
 	return (id);
@@ -312,6 +338,7 @@ void main(){
 		if(menu==1){
 			aa=login();
 			system("cls");
+			if(aa!=""){
 			if(!strcmp(lib_id,aa)==TRUE){
 				lib_menu();
 			}
@@ -319,6 +346,8 @@ void main(){
 				stu_menu(aa);
 			}
 			continue;
+			}
+
 		}
 		else if(menu=2){
 			system("cls");
