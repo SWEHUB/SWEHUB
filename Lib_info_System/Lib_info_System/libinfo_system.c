@@ -23,11 +23,11 @@ void lib_menu();
 void stu_menu(char *aa);
 void main_menu();
 void rentlsit(char *aa);
+void bookinfo_list( char *aa, char *bb);//////////////
 
 void main(){
 	main_menu();
 }
-
 void join(){
 	int select;
 	int num;
@@ -743,7 +743,6 @@ void bookadd(){
 
 	fclose(f);
 }
-
 void rentlist(char *aa){
 	int select;
 	int str_ck;
@@ -832,9 +831,6 @@ void rentlist(char *aa){
 	// + 다른거 선택 예외처리
 
 }
-
-
-
 void lib_menu(){
 	int lib_menu;
 	while(1){
@@ -905,11 +901,21 @@ void main_menu(){
 		printf("========도서관리========\n");
 		printf("1.로그인\n");
 		printf("2.회원가입\n");
+		printf("3.사서의 '45423323' 책정보 조회\n");////////////
 		printf("==>");
 
 		scanf("%d", &menu);
 		system("CLS");
 		getchar();
+
+		////////////////////////
+		if(menu=3){
+			system("cls");
+			bookinfo_list("7654321","45423323");
+			continue;
+		}
+		///////////////
+
 		if(menu==1){
 			aa=login();
 			system("cls");
@@ -930,3 +936,153 @@ void main_menu(){
 			continue;
 	}
 }
+void bookinfo_list( char *aa, char *bb){
+	int str_ck;
+	int book_num=0,book_num2=0;
+	char cmp_ISBN[10];
+	char string[MAXSTRING]; 
+	char string2[MAXSTRING]; 
+	FILE *f,*fp;
+	char *pch;
+	char booklist[100]="";
+	char bookin[150]="";
+	char isbn[20];
+	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
+	char std[1000][180] = {0,};
+	int line= 0, line2= 0;//읽어들인 줄 갯수 카운트 
+	int menu;
+	char lib_id[10]="7654321";//전역으로 빼고
+	struct BookInfo Book;
+
+	if((f=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	if((fp=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+	while(fgets(string,MAXSTRING - 1,f)) 
+	{ 
+		str_ck=1;
+		pch = strtok(string,"	,\n");// string에 ISBN이 들어감
+
+		fgets(string2,MAXSTRING - 1,fp);
+		while (pch != NULL)
+		{
+			/*switch(str_ck){
+			case 1:{
+			strcpy(Book.title,pch);break;}
+			case 2:{
+			strcpy(Book.authors,pch);break;}
+			case 3:{
+			strcpy(Book.publisher,pch);break;}
+			case 4:{
+			strcpy(Book.isbn,bb);break;}////
+			case 5:{
+			strcpy(Book.availability,pch);break;}
+			case 6:{
+			strcpy(Book.renting,pch);break;}
+			default:
+			break;
+
+			}
+			book_num++;
+			*/
+			if(str_ck==1){
+				strcpy(Book.title,pch);
+			}
+			else if(str_ck==2){
+				strcpy(Book.authors,pch);
+			}
+			else if(str_ck==3){
+				strcpy(Book.publisher,pch);
+			}
+			else if(str_ck==4)
+			{
+				strcpy(cmp_ISBN,pch);
+				strcpy(Book.isbn,bb);
+				////////////////////
+				if(!strcmp(cmp_ISBN,Book.isbn))
+				{
+					strcpy(isbn,pch);
+					str_ck++;
+					pch = strtok(NULL,"	,\n");
+					strcpy(Book.availability,pch);
+					str_ck++;
+					pch = strtok(NULL,"	,\n");
+					strcpy(Book.renting,pch);
+					break;
+				}
+				///////////////
+				book_num++;
+			}
+
+			str_ck++;			  
+			pch = strtok(NULL,"	,\n");
+		}
+		if(book_num==book_num2)
+			break;
+		book_num2++;
+	}
+	fclose(fp);
+
+	printf("\n--------------------\n");
+	printf("e도서정보");
+
+	printf("\n책제목   : %s",Book.title);
+	printf("\n저자     : %s",Book.authors);
+	printf("\n출판사   : %s",Book.publisher);
+	printf("\nISBN     : %s",Book.isbn);
+	printf("\n대출현황 : %s",Book.availability);
+	printf("\n대출학생 : %s",Book.renting);
+
+
+
+
+	while(1){
+		printf("\n--------------------\n");
+
+		if(!strcmp(lib_id,aa)==TRUE){//사서
+			//////함수로 넘기는게 나을듯
+			printf("1.수정\n");
+			printf("2.삭제\n");
+			printf("3.대출\n");
+			printf("4.반납\n");
+			printf("0.메인화면\n");
+			printf("=>");
+			scanf("%d",&menu);
+
+			switch(menu){
+				case 0:{//사서메뉴
+					   lib_menu();}
+				case 1:{//
+					   Update(bb);}
+				case 2:{//
+					   Delete();}/////////////////////////아무값도 안넘김??isbn은..?
+				case 3:{//
+					   rent(bb);}
+				case 4:{//
+					   Return(bb);}
+				default:{
+						break;}
+
+			}
+		}
+		else{
+			//////함수로 넘기는게 나을듯
+			while(1){
+				printf("0.메인화면\n");
+				printf("=>");
+				scanf("%d",&menu);
+
+				if(menu==0)
+					stu_menu(aa);
+				else
+					printf("! 제공하지 않는 메뉴번호입니다.\n");
+			}
+		}
+	}
+};
