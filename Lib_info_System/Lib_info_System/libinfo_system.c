@@ -20,6 +20,7 @@ void bookadd();
 void lib_menu();
 void stu_menu(char *aa);
 void main_menu();
+void rentlsit(char *aa);
 
 void main(){
 	main_menu();
@@ -109,6 +110,10 @@ void join(){
 		else if(select == 0)
 		{
 			system("cls");
+			/*
+			현재 첫페이지로 돌아가기에서 학생 메인으로 넘어감
+			일반 메인창으로 변경 할 것!
+			*/
 			break;
 		}
 		else
@@ -340,6 +345,97 @@ void bookadd(){
 
 	fclose(f);
 }
+
+void rentlist(char *aa){
+	int select;
+	int str_ck;
+	int book_num=1;
+	char cmp_id[10];
+	char id[10];
+	char string[MAXSTRING]; 
+	char string2[MAXSTRING]; 
+	char buffer[100];
+	FILE *f,*fp;
+	char *pch;
+	char *booklist2;
+	char *s_book;
+	char booklist[100]="";
+	//char booklist2[100]="";
+
+	if((f=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+
+	if((fp=fopen("book_info.txt","r"))==NULL)
+	{
+		puts("error");
+		exit(0);
+	}
+
+	printf("========학생(%s)========\n", aa);
+	/// 현재 대출한 자료
+	//printf("책 제목   |   저자   |   출판사   |   ISBN   |   대출상황   |   대출학생\n");
+	printf("번호 | 책 제목\n");
+
+	while(fgets(string,MAXSTRING - 1,f)) 
+	{ 
+		str_ck=1;
+		pch = strtok(string,"	,\n");
+
+		fgets(string2,MAXSTRING - 1,fp);
+		while (pch != NULL)
+		{
+			if(str_ck==6)
+			{
+				strcpy(cmp_id,pch);
+				strcpy(id,aa);
+				if(!strcmp(cmp_id,id))
+				{
+					s_book = itoa(book_num,buffer,10);
+					strcat(booklist,s_book);
+					strcat(booklist,"	");
+					strcat(booklist,string);
+					strcat(booklist,"\n");
+
+					printf("%d	%s\n",book_num,string);
+					book_num++;
+				}
+			}
+
+			str_ck++;			  
+			pch = strtok(NULL,"	,\n");
+
+		}
+	}
+
+	printf("\n------------------------\n");
+	//printf("0. 메인화면\n");
+	printf("책 번호 : ");
+	scanf("%d",&select);
+
+	if(select !=0)
+	{
+
+		booklist2 = strtok(booklist,"	,\n");
+		while (booklist2 != NULL)
+		{
+			if(!strcmp(s_book,booklist2)){
+			
+				//입력받은 책 번호와 매칭되는 책 정보 출력
+				// 도서 상세 정보 창
+			printf("%s 책정보\n",booklist2);
+			}
+			booklist2 = strtok(NULL,"	,\n");
+		}
+	}
+
+	// + 다른거 선택 예외처리
+
+}
+
+
 void lib_menu(){
 	int lib_menu;
 	while(1){
@@ -389,6 +485,7 @@ void stu_menu(char *aa){
 					}
 					else if(stu_menu==2){
 						//bookadd();
+						rentlist(aa);
 						continue;
 					}
 					else if(stu_menu==0){
