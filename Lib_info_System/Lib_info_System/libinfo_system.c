@@ -13,16 +13,16 @@ struct BookInfo{
 	};
 
 void join();
-void Update();
+void Update(char *isbn);
 void Delete();
-void rent(char *aa,char *bb);
-void Return();
+void rent(char *isbn);
+void Return(char *isbn);
 char *login(void);
 void bookadd();
 void lib_menu();
-void stu_menu(char *aa);
+void stu_menu(char *id);
 void main_menu();
-void rentlsit(char *aa);
+void rentlsit(char *id);
 
 void main(){
 	main_menu();
@@ -125,7 +125,7 @@ void join(){
 
 	fclose(f);
 }
-void Update(char *bb){
+void Update(char *isbn){
 	int select;
 	int i;
 	int str_ck;
@@ -144,10 +144,6 @@ void Update(char *bb){
 	char title[100];//
 	char authors[20];
 	char publisher[20];
-	char isbn[20];
-	char title2[100];//
-	char authors2[20];
-	char publisher2[20];
 	char isbn2[20];
 	char availability[10];
 	char renting[10];// long
@@ -195,10 +191,10 @@ void Update(char *bb){
 			else if(str_ck==4)
 			{
 				strcpy(cmp_ISBN,pch);
-				strcpy(ISBN,bb);
+				strcpy(ISBN,isbn);
 				if(!strcmp(cmp_ISBN,ISBN))
 				{
-					strcpy(isbn,pch);
+					strcpy(isbn2,pch);
 					str_ck++;
 					pch = strtok(NULL,"	,\n");
 					strcpy(availability,pch);
@@ -248,8 +244,8 @@ void Update(char *bb){
 			getchar();
 		}
 		else if(select==4){
-			printf("ISBN: %s =>",isbn);
-			scanf("%s",&isbn);
+			printf("ISBN: %s =>",isbn2);
+			scanf("%s",&isbn2);
 			getchar();
 		}
 		else
@@ -269,7 +265,7 @@ void Update(char *bb){
 	} 
 	fclose(fp); 
 	fp = fopen("book_info.txt", "a");
-	fprintf(fp,"%s	%s	%s	%s	%s	%s",title,authors,publisher,isbn,availability,renting);
+	fprintf(fp,"%s	%s	%s	%s	%s	%s",title,authors,publisher,isbn2,availability,renting);
 	fprintf(fp,"\n");
 	fclose(fp);
 	fp = fopen("book_info.txt", "a");
@@ -321,7 +317,7 @@ void Delete(){//기능구현완료
    } 
    fclose(fp); 
 }
-void rent(char *bb){// 학번,ISBN 받아오기
+void rent(char *isbn){// 학번,ISBN 받아오기
 	int select;
 	int i;
 	int str_ck;
@@ -340,7 +336,7 @@ void rent(char *bb){// 학번,ISBN 받아오기
 	char title[100];//
 	char authors[20];
 	char publisher[20];
-	char isbn[20];
+	char isbn2[20];
 	char renting[10];// long
 	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
 	char std[1000][180] = {0,};
@@ -402,10 +398,10 @@ void rent(char *bb){// 학번,ISBN 받아오기
 			else if(str_ck==4)
 			{
 				strcpy(cmp_ISBN,pch);
-				strcpy(ISBN,bb);
+				strcpy(ISBN,isbn);
 				if(!strcmp(cmp_ISBN,ISBN))
 				{
-					strcpy(isbn,pch);
+					strcpy(isbn2,pch);
 					//strcat(isbn,string);
 					break;
 				}
@@ -435,7 +431,7 @@ void rent(char *bb){// 학번,ISBN 받아오기
 	} 
 	fclose(fp); 
 	fp = fopen("book_info.txt", "a");
-	fprintf(fp,"%s	%s	%s	%s	대출불가	%s",title,authors,publisher,isbn,renting);
+	fprintf(fp,"%s	%s	%s	%s	대출불가	%s",title,authors,publisher,isbn2,renting);
 	fprintf(fp,"\n");
 	fclose(fp);
 	fp = fopen("book_info.txt", "a");
@@ -455,7 +451,7 @@ void rent(char *bb){// 학번,ISBN 받아오기
 	}
 	system("cls");
 }
-void Return(char *bb){
+void Return(char *isbn){
 	int select;
 	int i;
 	int str_ck;
@@ -474,7 +470,7 @@ void Return(char *bb){
 	char title[100];//
 	char authors[20];
 	char publisher[20];
-	char isbn[20];
+	char isbn2[20];
 	char availability[10];
 	char renting[10];// long
 	char str[1000][180] = {0,};//천줄까지 읽어들일수 있음(한줄은 256자 까지) 
@@ -531,10 +527,10 @@ void Return(char *bb){
 			else if(str_ck==4)
 			{
 				strcpy(cmp_ISBN,pch);
-				strcpy(ISBN,bb);
+				strcpy(ISBN,isbn);
 				if(!strcmp(cmp_ISBN,ISBN))
 				{
-					strcpy(isbn,pch);
+					strcpy(isbn2,pch);
 					//strcat(isbn,string);
 					break;
 				}
@@ -564,7 +560,7 @@ void Return(char *bb){
 	} 
 	fclose(fp); 
 	fp = fopen("book_info.txt", "a");
-	fprintf(fp,"%s	%s	%s	%s	대출가능	-",title,authors,publisher,isbn);
+	fprintf(fp,"%s	%s	%s	%s	대출가능	-",title,authors,publisher,isbn2);
 	fprintf(fp,"\n");
 	fclose(fp);
 	fp = fopen("book_info.txt", "a");
@@ -744,13 +740,12 @@ void bookadd(){
 
 	fclose(f);
 }
-
-void rentlist(char *aa){
+void rentlist(char *id){
 	int select;
 	int str_ck;
 	int book_num=1;
 	char cmp_id[10];
-	char id[10];
+	char ID[10];
 	char string[MAXSTRING]; 
 	char string2[MAXSTRING]; 
 	char buffer[100];
@@ -773,7 +768,7 @@ void rentlist(char *aa){
 		exit(0);
 	}
 
-	printf("========학생(%s)========\n", aa);
+	printf("========학생(%s)========\n", id);
 	/// 현재 대출한 자료
 	//printf("책 제목   |   저자   |   출판사   |   ISBN   |   대출상황   |   대출학생\n");
 	printf("번호 | 책 제목\n");
@@ -789,8 +784,8 @@ void rentlist(char *aa){
 			if(str_ck==6)
 			{
 				strcpy(cmp_id,pch);
-				strcpy(id,aa);
-				if(!strcmp(cmp_id,id))
+				strcpy(ID,id);
+				if(!strcmp(cmp_id,ID))
 				{
 					s_book = itoa(book_num,buffer,10);
 					strcat(booklist,s_book);
@@ -833,9 +828,6 @@ void rentlist(char *aa){
 	// + 다른거 선택 예외처리
 
 }
-
-
-
 void lib_menu(){
 	int lib_menu;
 	while(1){
@@ -866,11 +858,11 @@ void lib_menu(){
 				}
 
 }
-void stu_menu(char *aa){
+void stu_menu(char *id){
 	int stu_menu;
 
 	while(1){
-					printf("========학생(%s)========\n", aa);
+					printf("========학생(%s)========\n", id);
 					printf("1.검색\n");
 					printf("2.내가 대출한 도서\n\n");
 					printf("0.로그아웃\n");
@@ -885,7 +877,7 @@ void stu_menu(char *aa){
 					}
 					else if(stu_menu==2){
 						//bookadd();
-						rentlist(aa);
+						rentlist(id);
 						continue;
 					}
 					else if(stu_menu==0){
@@ -898,7 +890,7 @@ void stu_menu(char *aa){
 }
 void main_menu(){
 	int menu;
-	char *aa;
+	char *id;
 	char lib_id[10]="7654321";
 	
 
@@ -912,13 +904,13 @@ void main_menu(){
 		system("CLS");
 		getchar();
 		if(menu==1){
-			aa=login();
+			id=login();
 			system("cls");
-			if(!strcmp(lib_id,aa)==TRUE){
+			if(!strcmp(lib_id,id)==TRUE){
 				lib_menu();
 			}
 			else{
-				stu_menu(aa);
+				stu_menu(id);
 			}
 			continue;
 		}
